@@ -1,4 +1,4 @@
-package kakaku
+package main
 
 import (
 	"bytes"
@@ -19,23 +19,20 @@ const (
 )
 
 type product struct {
-	ID                  string          `json:"id"`
-	Symbol              string          `json:"symbol"`
-	ProductType         string          `json:"product_type"`
-	Code                string          `json:"code"`
-	Name                string          `json:"name"`
-	MarketAsk           decimal.Decimal `json:"market_ask"`
-	MarketBid           decimal.Decimal `json:"market_bid"`
-	Currency            string          `json:"currency"`
-	CurrencyPairCode    string          `json:"currency_pair_code"`
-	BtcMinimumWithdraw  interface{}     `json:"btc_minimum_withdraw"`
-	FiatMinimumWithdraw interface{}     `json:"fiat_minimum_withdraw"`
-	PusherChannel       string          `json:"pusher_channel"`
-	LastTradedPrice     decimal.Decimal `json:"last_traded_price"`
-	QuotedCurrency      string          `json:"quoted_currency"`
-	BaseCurrency        string          `json:"base_currency"`
-	LastEventTimestamp  string          `json:"last_event_timestamp"`
-	ExchangeRate        int             `json:"exchange_rate"`
+	ID                 string          `json:"id"`
+	Symbol             string          `json:"symbol"`
+	ProductType        string          `json:"product_type"`
+	Code               string          `json:"code"`
+	Name               string          `json:"name"`
+	MarketAsk          decimal.Decimal `json:"market_ask"`
+	MarketBid          decimal.Decimal `json:"market_bid"`
+	Currency           string          `json:"currency"`
+	CurrencyPairCode   string          `json:"currency_pair_code"`
+	LastTradedPrice    decimal.Decimal `json:"last_traded_price"`
+	QuotedCurrency     string          `json:"quoted_currency"`
+	BaseCurrency       string          `json:"base_currency"`
+	LastEventTimestamp string          `json:"last_event_timestamp"`
+	ExchangeRate       int             `json:"exchange_rate"`
 }
 
 type liquid struct {
