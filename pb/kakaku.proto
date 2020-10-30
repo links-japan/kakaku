@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package kakaku;
+
+option go_package = "github.com/links-japan/kakaku/pb/kakaku";
+
+import "google/protobuf/timestamp.proto";
+
+message AssetPriceRequest {
+  string base = 1;
+  string quote = 2;
+}
+
+message AssetPriceResponse {
+  string base = 1;
+  string quote = 2;
+  string price = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+service CheckinService {
+  rpc AssetPrice(AssetPriceRequest) returns (AssetPriceResponse);
+}
