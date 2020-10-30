@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/shopspring/decimal"
 	"io/ioutil"
@@ -16,6 +15,7 @@ import (
 const (
 	LIQUID_API_BASE    = "https://api.liquid.com" // Liquid API endpoint
 	LIQUID_API_VERSION = "2"
+	BTC_JPY_PAIR       = 5
 )
 
 type product struct {
@@ -92,7 +92,7 @@ func (l *liquid) do(method string, resource string, payload string) (response []
 		return response, err
 	}
 	if resp.StatusCode != 200 {
-		err = errors.New(resp.Status)
+		err = fmt.Errorf("liquid response error, status code %d, status %s", resp.StatusCode, resp.Status)
 	}
 	return response, err
 }
