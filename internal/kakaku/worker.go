@@ -1,23 +1,9 @@
-package main
-
-import (
-	"github.com/sirupsen/logrus"
-	"time"
-)
+package kakaku
 
 var liquidC *liquid
 
 func init() {
 	liquidC = newClient()
-}
-
-func Run() {
-	for {
-		if err := UpdateAssetPrice(); err != nil {
-			logrus.Errorln("update asset price error", err)
-		}
-		time.Sleep(time.Minute)
-	}
 }
 
 func UpdateAssetPrice() error {

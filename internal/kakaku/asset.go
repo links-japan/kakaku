@@ -1,4 +1,4 @@
-package main
+package kakaku
 
 import (
 	"github.com/shopspring/decimal"
@@ -13,8 +13,16 @@ type Asset struct {
 
 func FirstOrCreate(symbol string, tx *gorm.DB) (*Asset, error) {
 	var asset Asset
-	err := tx.Where(Asset{Symbol: symbol}).FirstOrCreate(&asset).Error
-	if err != nil {
+	err := tx.Where(Asset{Symbol: symbol}).First(&asset).Error
+	switch {
+	case err == gorm.ErrRecordNotFound:
+		asset.Symbol = symbol
+		asset.PriceJPY = decimal.Zero
+		if err := tx.Create(&asset).Error; err != nil {
+			return nil, err
+		}
+		return &asset, nil
+	case err != nil:
 		return nil, err
 	}
 	return &asset, nil
