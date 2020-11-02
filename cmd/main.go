@@ -5,6 +5,8 @@ import (
 	kakakupb "github.com/links-japan/kakaku/pb"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"log"
 	"net"
 	"time"
@@ -30,6 +32,11 @@ func startServer() {
 
 	s, grpcServer := kakaku.Server{}, grpc.NewServer()
 	kakakupb.RegisterCheckinServiceServer(grpcServer, &s)
+
+	hsrv := health.NewServer()
+	hsrv.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+	healthpb.RegisterHealthServer(grpcServer, hsrv)
+
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}
