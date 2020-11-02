@@ -8,7 +8,7 @@ import (
 )
 
 func BTCToJPY() (decimal.Decimal, error) {
-	r, err := assetPrice("BTC", "JPY")
+	r, err := AssetPrice("BTC", "JPY")
 	if err != nil {
 		return decimal.Zero, nil
 	}
@@ -16,7 +16,7 @@ func BTCToJPY() (decimal.Decimal, error) {
 	return n, nil
 }
 
-func assetPrice(base, quote string) (*kakakupb.AssetPriceResponse, error) {
+func AssetPrice(base, quote string) (*kakakupb.AssetPriceResponse, error) {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial("KAKAKU_ADDR", grpc.WithInsecure())
 	if err != nil {
