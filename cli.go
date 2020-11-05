@@ -5,6 +5,7 @@ import (
 	kakakupb "github.com/links-japan/kakaku/pb"
 	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
+	"os"
 )
 
 func BTCToJPY() (decimal.Decimal, error) {
@@ -18,7 +19,7 @@ func BTCToJPY() (decimal.Decimal, error) {
 
 func AssetPrice(base, quote string) (*kakakupb.AssetPriceResponse, error) {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("KAKAKU_ADDR", grpc.WithInsecure())
+	conn, err := grpc.Dial(os.Getenv("KAKAKU_ADDR"), grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}

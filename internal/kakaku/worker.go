@@ -1,5 +1,7 @@
 package kakaku
 
+import "fmt"
+
 var liquidC *liquid
 
 func init() {
@@ -11,8 +13,8 @@ func UpdateAssetPrice() error {
 	if err != nil {
 		return err
 	}
-
-	asset, err := FirstOrCreate(product.Symbol, Conn())
+	fmt.Println(product)
+	asset, err := FirstOrCreate(product.BaseCurrency, Conn())
 	if err != nil {
 		return err
 	}
