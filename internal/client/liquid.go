@@ -106,6 +106,6 @@ func (l *LiquidClient) do(ctx context.Context, method string, resource string, p
 	return response, err
 }
 
-func (l *LiquidClient) Name() string {
-	return "LiquidClient"
+func (l *LiquidClient) Source() string {
+	return "Liquid"
 }

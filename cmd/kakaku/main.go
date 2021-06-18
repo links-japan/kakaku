@@ -78,10 +78,11 @@ func startWorker() {
 	assets := store.NewAssetStore()
 
 	asset := store.Asset{
-		Base:  base,
-		Quote: quote,
-		Price: decimal.Zero,
-		Term:  0,
+		Base:   base,
+		Quote:  quote,
+		Price:  decimal.Zero,
+		Source: "",
+		Term:   0,
 	}
 	_ = assets.FirstOrCreate(&asset)
 

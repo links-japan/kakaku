@@ -46,6 +46,6 @@ func (m *MixinClient) Price(ctx context.Context, base string, quote string) (dec
 	return asset.PriceUSD.Mul(rate), nil
 }
 
-func (m *MixinClient) Name() string {
-	return 	"MixinClient"
+func (m *MixinClient) Source() string {
+	return "Mixin"
 }

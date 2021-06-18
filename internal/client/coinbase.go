@@ -17,7 +17,6 @@ func NewCoinBaseClient() *CoinbaseClient {
 	}
 }
 
-
 type priceResponse struct {
 	Data struct {
 		Base     string
@@ -45,9 +44,9 @@ func (co *CoinbaseClient) Price(ctx context.Context, base string, quote string) 
 		return decimal.Zero, err
 	}
 
-	return  re.Data.Amount, nil
+	return re.Data.Amount, nil
 }
 
-func (co *CoinbaseClient) Name() string {
-	return "CoinbaseClient"
+func (co *CoinbaseClient) Source() string {
+	return "Coinbase"
 }

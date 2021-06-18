@@ -17,13 +17,14 @@ func UpdateAssetPrice(oracle *Oracle, assets *store.AssetStore, base, quote stri
 	term := prevTerm + 1
 	logrus.WithField("term", term).Debug("update asset price")
 
-	nullPrice := oracle.Price(context.TODO(), base, quote)
+	nullPrice, source := oracle.Price(context.TODO(), base, quote)
 	if !nullPrice.Valid {
 		return fmt.Errorf("failed term: %v, base: %v, quote %v\n", term, base, quote)
 	}
 
 	asset.Price = nullPrice.Decimal
 	asset.Term = term
+	asset.Source = source
 
 	return assets.Update(&asset, base, quote, prevTerm)
 }

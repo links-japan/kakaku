@@ -13,5 +13,5 @@ const (
 
 type Client interface {
 	Price(ctx context.Context, base string, quote string) (decimal.Decimal, error)
-	Name() string
+	Source() string
 }

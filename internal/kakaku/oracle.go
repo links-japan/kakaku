@@ -25,11 +25,12 @@ func NewOracle(clients []client.Client, assets *store.AssetStore, cfg *config.Or
 	}
 }
 
-func (o *Oracle) Price(ctx context.Context, base string, quote string) decimal.NullDecimal {
+func (o *Oracle) Price(ctx context.Context, base string, quote string) (decimal.NullDecimal, string) {
 	result := decimal.NullDecimal{}
 	approveCnt := 0
 	start := time.Now()
 	mu := sync.Mutex{}
+	source := ""
 
 	ctx, cancel := context.WithTimeout(ctx, o.cfg.RequestTimeout)
 	defer cancel()
@@ -37,10 +38,10 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) decimal.N
 	for _, cli := range o.clients {
 		go func(cli client.Client) {
 			price, err := cli.Price(ctx, base, quote)
-			logrus.WithField("name", cli.Name()).WithField("price", price).Debug("client price")
+			logrus.WithField("name", cli.Source()).WithField("price", price).Debug("client price")
 
 			if err != nil {
-				logrus.Error("client price err", cli.Name(), err)
+				logrus.Error("client price err", cli.Source(), err)
 				return
 			}
 
@@ -49,6 +50,7 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) decimal.N
 			if !result.Valid {
 				result.Decimal = price
 				result.Valid = true
+				source = cli.Source()
 				approveCnt += 1
 				return
 			}
@@ -72,5 +74,5 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) decimal.N
 	if approveCnt < o.cfg.ApproveThreshold {
 		result.Valid = false
 	}
-	return result
+	return result, source
 }
