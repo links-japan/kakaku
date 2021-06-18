@@ -1,0 +1,51 @@
+package client
+
+import (
+	"context"
+	"github.com/fox-one/mixin-sdk-go"
+	"github.com/shopspring/decimal"
+	"strings"
+)
+
+var Symbol2AssetID = map[string]string{
+	"BTC": "c6d0c728-2624-429b-8e0d-d9d19b6592fa",
+	"CNB": "965e5c6e-434c-3fa9-b780-c50f43cd955c",
+}
+
+type MixinClient struct {
+	client *mixin.Client
+}
+
+func NewMixinClient(keystore *mixin.Keystore) *MixinClient {
+	cli, err := mixin.NewFromKeystore(keystore)
+	if err != nil {
+		panic(err)
+	}
+	return &MixinClient{cli}
+}
+
+func (m *MixinClient) Price(ctx context.Context, base string, quote string) (decimal.Decimal, error) {
+	assetID := Symbol2AssetID[base]
+	asset, err := m.client.ReadAsset(ctx, assetID)
+	if err != nil {
+		return decimal.Zero, err
+	}
+
+	rates, err := m.client.ReadExchangeRates(ctx)
+	if err != nil {
+		return decimal.Zero, err
+	}
+
+	var rate decimal.Decimal
+	for _, r := range rates {
+		if strings.EqualFold(r.Code, quote) {
+			rate = r.Rate
+		}
+	}
+
+	return asset.PriceUSD.Mul(rate), nil
+}
+
+func (m *MixinClient) Name() string {
+	return 	"MixinClient"
+}

@@ -1,15 +1,14 @@
-package kakaku
+package store
 
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"os"
 )
 
 var db *gorm.DB
 
-func Connect() error {
-	conn, err := gorm.Open(mysql.Open(os.Getenv("DATABASE_DSN")), &gorm.Config{})
+func Connect(dsn string) error {
+	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
 	}

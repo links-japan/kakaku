@@ -7,7 +7,7 @@ ADD . .
 # if you are in China, please uncomment this line to setup golang proxy
 #RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN go mod download
-RUN CGO_ENABLED=0 go build -o kakaku_cmd ./cmd/main.go
+RUN CGO_ENABLED=0 go build -o kakaku_cmd ./cmd/kakaku
 
 RUN GRPC_HEALTH_PROBE_VERSION=v0.3.2 && \
     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \

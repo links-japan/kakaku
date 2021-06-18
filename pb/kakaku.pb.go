@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.24.0
 // 	protoc        v3.11.2
-// source: pb/kakaku.proto
+// client: pb/kakaku.proto
 
 package kakaku
 
