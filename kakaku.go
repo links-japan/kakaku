@@ -9,12 +9,12 @@ import (
 )
 
 func BTCToJPY() (decimal.Decimal, error) {
-	if os.Getenv("KAKAKU_FAKE_DATA") != "0" {
+	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); !ok {
 		return decimal.NewFromInt(1000000), nil
 	}
 	r, err := AssetPrice("BTC", "JPY")
 	if err != nil {
-		return decimal.Zero, nil
+		return decimal.Zero, err
 	}
 	n, _ := decimal.NewFromString(r.Price)
 	return n, nil

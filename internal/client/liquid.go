@@ -1,7 +1,8 @@
-package kakaku
+package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/shopspring/decimal"
@@ -9,14 +10,16 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const (
-	LIQUID_API_BASE    = "https://api.liquid.com" // Liquid API endpoint
-	LIQUID_API_VERSION = "2"
-	BTC_JPY_PAIR       = 5
+	LiquidApiBase    = "https://api.LiquidClient.com" // LiquidClient API endpoint
+	LiquidApiVersion = "2"
 )
+
+var PairProductID = map[string]int{
+	"BTC-JPY": 5,
+}
 
 type product struct {
 	ID                 string          `json:"id"`
@@ -35,18 +38,26 @@ type product struct {
 	ExchangeRate       int             `json:"exchange_rate"`
 }
 
-type liquid struct {
-	httpClient  *http.Client
-	httpTimeout time.Duration
+type LiquidClient struct {
+	httpClient *http.Client
 }
 
-// newClient return a new Liquid HTTP client
-func newClient() (c *liquid) {
-	return &liquid{&http.Client{}, 30 * time.Second}
+// NewLiquidClient return a new LiquidClient HTTP client
+func NewLiquidClient() (c *LiquidClient) {
+	return &LiquidClient{&http.Client{}}
 }
 
-func (l *liquid) getTicker(productId int) (*product, error) {
-	r, err := l.do("GET", "/products/"+strconv.Itoa(productId), "")
+func (l *LiquidClient) Price(ctx context.Context, base string, quote string) (decimal.Decimal, error) {
+	pair := base + "-" + quote
+	p, err := l.getTicker(ctx, PairProductID[pair])
+	if err != nil {
+		return decimal.Zero, err
+	}
+	return p.LastTradedPrice, nil
+}
+
+func (l *LiquidClient) getTicker(ctx context.Context, productId int) (*product, error) {
+	r, err := l.do(ctx, "GET", "/products/"+strconv.Itoa(productId), "")
 	if err != nil {
 		return nil, err
 	}
@@ -59,18 +70,16 @@ func (l *liquid) getTicker(productId int) (*product, error) {
 	return &p, nil
 }
 
-// do prepare and process HTTP request to Liquid API
-func (l *liquid) do(method string, resource string, payload string) (response []byte, err error) {
-	connectTimer := time.NewTimer(l.httpTimeout)
-
+// do prepare and process HTTP request to LiquidClient API
+func (l *LiquidClient) do(ctx context.Context, method string, resource string, payload string) (response []byte, err error) {
 	var rawurl string
 	if strings.HasPrefix(resource, "http") {
 		rawurl = resource
 	} else {
-		rawurl = fmt.Sprintf("%s%s", LIQUID_API_BASE, resource)
+		rawurl = fmt.Sprintf("%s%s", LiquidApiBase, resource)
 	}
 
-	req, err := http.NewRequest(method, rawurl, bytes.NewBuffer([]byte(payload)))
+	req, err := http.NewRequestWithContext(ctx, method, rawurl, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
 		return
 	}
@@ -79,9 +88,9 @@ func (l *liquid) do(method string, resource string, payload string) (response []
 		req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	}
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("X-Quoine-API-Version", LIQUID_API_VERSION)
+	req.Header.Add("X-Quoine-API-Version", LiquidApiVersion)
 
-	resp, err := l.doTimeoutRequest(connectTimer, req)
+	resp, err := l.httpClient.Do(req)
 	if err != nil {
 		return
 	}
@@ -92,28 +101,11 @@ func (l *liquid) do(method string, resource string, payload string) (response []
 		return response, err
 	}
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("liquid response error, status code %d, status %s", resp.StatusCode, resp.Status)
+		err = fmt.Errorf("LiquidClient response error, status code %d, status %s", resp.StatusCode, resp.Status)
 	}
 	return response, err
 }
 
-// doTimeoutRequest do a HTTP request with timeout
-func (l *liquid) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.Response, error) {
-	// Do the request in the background so we can check the timeout
-	type result struct {
-		resp *http.Response
-		err  error
-	}
-	done := make(chan result, 1)
-	go func() {
-		resp, err := l.httpClient.Do(req)
-		done <- result{resp, err}
-	}()
-	// Wait for the read or the timeout
-	select {
-	case r := <-done:
-		return r.resp, r.err
-	case <-timer.C:
-		return nil, fmt.Errorf("timeout on reading data from Liquid API")
-	}
+func (l *LiquidClient) Source() string {
+	return "Liquid"
 }

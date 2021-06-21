@@ -1,0 +1,18 @@
+mixin:
+  client_id:
+  pin_token:
+  private_key:
+  session_id:
+
+db:
+  dsn:
+
+oracle:
+  request_timeout: 3s
+  approve_threshold: 2
+  price_delta: 0.01
+
+worker:
+  term_timeout: 5s
+
+debug: true
