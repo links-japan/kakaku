@@ -6,6 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
 	"os"
+	"time"
 )
 
 func BTCToJPY() (decimal.Decimal, error) {
@@ -18,6 +19,18 @@ func BTCToJPY() (decimal.Decimal, error) {
 	}
 	n, _ := decimal.NewFromString(r.Price)
 	return n, nil
+}
+
+func BtcToJpyWithTime() (decimal.Decimal, time.Time, error) {
+	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); !ok {
+		return decimal.NewFromInt(1000000), time.Now(), nil
+	}
+	r, err := AssetPrice("BTC", "JPY")
+	if err != nil {
+		return decimal.Zero, time.Time{}, err
+	}
+	n, _ := decimal.NewFromString(r.Price)
+	return n, r.Timestamp.AsTime(), nil
 }
 
 func AssetPrice(base, quote string) (*kakakupb.AssetPriceResponse, error) {
