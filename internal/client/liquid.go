@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	LiquidApiBase    = "https://api.LiquidClient.com" // LiquidClient API endpoint
+	LiquidApiBase    = "https://api.liquid.com" // LiquidClient API endpoint
 	LiquidApiVersion = "2"
 )
 
