@@ -9,23 +9,11 @@ import (
 	"time"
 )
 
-func BTCToJPY() (decimal.Decimal, error) {
-	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); !ok {
-		return decimal.NewFromInt(1000000), nil
-	}
-	r, err := AssetPrice("BTC", "JPY")
-	if err != nil {
-		return decimal.Zero, err
-	}
-	n, _ := decimal.NewFromString(r.Price)
-	return n, nil
-}
-
-func BtcToJpyWithTime() (decimal.Decimal, time.Time, error) {
+func PriceWithTime(base, quote string) (decimal.Decimal, time.Time, error) {
 	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); !ok {
 		return decimal.NewFromInt(1000000), time.Now(), nil
 	}
-	r, err := AssetPrice("BTC", "JPY")
+	r, err := AssetPrice(base, quote)
 	if err != nil {
 		return decimal.Zero, time.Time{}, err
 	}
