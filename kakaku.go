@@ -2,11 +2,19 @@ package kakaku
 
 import (
 	"context"
+	"github.com/links-japan/kakaku/internal/client"
 	kakakupb "github.com/links-japan/kakaku/pb"
 	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
 	"os"
 	"time"
+)
+
+const (
+	BTC  = client.BTC
+	JPYC = client.JPYC
+
+	JPY  = client.JPY
 )
 
 func PriceWithTime(base, quote string) (decimal.Decimal, time.Time, error) {

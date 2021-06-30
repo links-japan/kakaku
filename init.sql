@@ -1,0 +1,2 @@
+INSERT INTO assets (base, quote, price, term, updated_at, created_at, source) VALUES ('BTC', 'JPY', '0', 0, '2021-06-30 04:51:31.088', '2021-06-18 08:20:24.171', '');
+INSERT INTO assets (base, quote, price, term, updated_at, created_at, source) VALUES ('JPYC', 'JPY', '1', 1, '2021-06-18 08:20:24.171', '2021-06-18 08:20:24.171', '');

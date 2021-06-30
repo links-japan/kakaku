@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	BTC = "BTC"
+	BTC  = "BTC"
+	JPYC = "JPYC"
 
 	JPY = "JPY"
 )

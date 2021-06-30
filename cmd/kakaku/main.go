@@ -46,8 +46,9 @@ func startServer() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s, grpcServer := kakaku.Server{}, grpc.NewServer()
-	kakakupb.RegisterCheckinServiceServer(grpcServer, &s)
+	assets := store.NewAssetStore()
+	s, grpcServer := kakaku.NewServer(assets), grpc.NewServer()
+	kakakupb.RegisterCheckinServiceServer(grpcServer, s)
 
 	hsrv := health.NewServer()
 	hsrv.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
@@ -76,15 +77,6 @@ func startWorker() {
 		client.NewCoinBaseClient(),
 	}
 	assets := store.NewAssetStore()
-
-	asset := store.Asset{
-		Base:   base,
-		Quote:  quote,
-		Price:  decimal.Zero,
-		Source: "",
-		Term:   0,
-	}
-	_ = assets.FirstOrCreate(&asset)
 
 	oracle := kakaku.NewOracle(clients, assets, &cfg.Oracle)
 
