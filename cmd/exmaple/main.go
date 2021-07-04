@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	price, _, err := kakaku.PriceWithTime(kakaku.BTC, kakaku.JPY)
+	price, _, err := kakaku.PriceWithTime(kakaku.BTC, kakaku.JPYC)
 	if err != nil {
 		panic(err)
 	}

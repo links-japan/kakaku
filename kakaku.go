@@ -12,13 +12,14 @@ import (
 
 const (
 	BTC  = client.BTC
+	ETH  = client.ETH
 	JPYC = client.JPYC
 
-	JPY  = client.JPY
+	JPY = client.JPY
 )
 
 func PriceWithTime(base, quote string) (decimal.Decimal, time.Time, error) {
-	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); !ok {
+	if _, ok := os.LookupEnv("KAKAKU_FAKE_DATA"); ok {
 		return decimal.NewFromInt(1000000), time.Now(), nil
 	}
 	r, err := AssetPrice(base, quote)
