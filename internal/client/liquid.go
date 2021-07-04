@@ -18,7 +18,8 @@ const (
 )
 
 var PairProductID = map[string]int{
-	"BTC-JPY": 5,
+	"BTCJPY": 5,
+	"ETHJPY": 29,
 }
 
 type product struct {
@@ -48,7 +49,7 @@ func NewLiquidClient() (c *LiquidClient) {
 }
 
 func (l *LiquidClient) Price(ctx context.Context, base string, quote string) (decimal.Decimal, error) {
-	pair := base + "-" + quote
+	pair := base + quote
 	p, err := l.getTicker(ctx, PairProductID[pair])
 	if err != nil {
 		return decimal.Zero, err

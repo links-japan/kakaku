@@ -60,9 +60,6 @@ func startServer() {
 }
 
 func startWorker() {
-	// TODO: set worker tasks in config
-	base := "BTC"
-	quote := "JPY"
 
 	keystore := mixin.Keystore{
 		ClientID:   cfg.Mixin.ClientID,
@@ -78,8 +75,18 @@ func startWorker() {
 	}
 	assets := store.NewAssetStore()
 
-	oracle := kakaku.NewOracle(clients, assets, &cfg.Oracle)
+	lst, err := assets.ListVariable()
+	if err != nil {
+		logrus.Panic("start worker", err)
+	}
 
+	for _, asset := range lst {
+		oracle := kakaku.NewOracle(clients, assets, &cfg.Oracle)
+		go Run(oracle, assets, asset.Base, asset.Quote)
+	}
+}
+
+func Run(oracle *kakaku.Oracle, assets *store.AssetStore, base, quote string) {
 	for {
 		if err := kakaku.UpdateAssetPrice(oracle, assets, base, quote); err != nil {
 			logrus.Errorln("update asset price error", err)

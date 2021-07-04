@@ -8,6 +8,7 @@ import (
 const (
 	BTC  = "BTC"
 	JPYC = "JPYC"
+	ETH  = "ETH"
 
 	JPY = "JPY"
 )
