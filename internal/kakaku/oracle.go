@@ -2,13 +2,14 @@ package kakaku
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"github.com/links-japan/kakaku/internal/client"
 	"github.com/links-japan/kakaku/internal/config"
 	"github.com/links-japan/kakaku/internal/store"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
-	"sync"
-	"time"
 )
 
 type Oracle struct {
@@ -56,6 +57,10 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) (decimal.
 			}
 
 			value := result.Decimal
+			if value == decimal.Zero {
+				result.Valid = false
+				return
+			}
 			delta := value.Sub(price).Abs().Div(value)
 			if delta.LessThan(o.cfg.PriceDelta) {
 				approveCnt += 1
