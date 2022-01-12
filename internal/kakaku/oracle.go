@@ -57,7 +57,7 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) (decimal.
 			}
 
 			value := result.Decimal
-			if value == decimal.Zero {
+			if value.IsZero() {
 				result.Valid = false
 				return
 			}
