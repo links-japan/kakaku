@@ -1,22 +1,23 @@
 package main
 
 import (
+	"net"
+	"os"
+	"time"
+
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/links-japan/kakaku/internal/client"
 	"github.com/links-japan/kakaku/internal/config"
 	"github.com/links-japan/kakaku/internal/kakaku"
 	"github.com/links-japan/kakaku/internal/store"
 	kakakupb "github.com/links-japan/kakaku/pb"
+	"github.com/links-japan/log"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-	"log"
-	"net"
-	"os"
-	"time"
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 
 func main() {
 	initConfig()
+	log.Init()
 	if cfg.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
