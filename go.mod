@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/fox-one/mixin-sdk-go v1.4.6
+	github.com/getsentry/sentry-go v0.10.0
 	github.com/golang/protobuf v1.5.2
 	github.com/links-japan/log v0.0.5
 	github.com/magiconair/properties v1.8.4 // indirect
