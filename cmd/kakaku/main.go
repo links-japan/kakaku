@@ -1,22 +1,24 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/drone/signal"
 	"github.com/fox-one/mixin-sdk-go"
+	"github.com/go-chi/chi"
 	"github.com/links-japan/kakaku/internal/client"
 	"github.com/links-japan/kakaku/internal/config"
+	"github.com/links-japan/kakaku/internal/handler"
 	"github.com/links-japan/kakaku/internal/kakaku"
 	"github.com/links-japan/kakaku/internal/store"
-	kakakupb "github.com/links-japan/kakaku/pb"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-	"log"
-	"net"
-	"os"
-	"time"
 )
 
 var (
@@ -41,21 +43,43 @@ func main() {
 }
 
 func startServer() {
-	lis, err := net.Listen("tcp", ":50051")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	ctx := context.Background()
+	mux := chi.NewMux()
+	// rpc & api v1 & ws
+	{
+		svr := handler.New()
+
+		// api v1
+		restHandler := svr.HandleRest()
+		mux.Mount("/api", restHandler)
 	}
 
-	assets := store.NewAssetStore()
-	s, grpcServer := kakaku.NewServer(assets), grpc.NewServer()
-	kakakupb.RegisterCheckinServiceServer(grpcServer, s)
+	// launch server
+	addr := fmt.Sprintf(":%d", 8080)
 
-	hsrv := health.NewServer()
-	hsrv.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
-	healthpb.RegisterHealthServer(grpcServer, hsrv)
+	svr := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+	}
 
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %s", err)
+	done := make(chan struct{}, 1)
+	ctx = signal.WithContextFunc(ctx, func() {
+		logrus.Debug("shutdown server...")
+
+		// create context with timeout
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		defer cancel()
+
+		if err := svr.Shutdown(ctx); err != nil {
+			logrus.WithError(err).Error("graceful shutdown server failed")
+		}
+
+		close(done)
+	})
+
+	logrus.Infoln("serve at", addr)
+	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
+		logrus.WithError(err).Fatal("server aborted")
 	}
 }
 

@@ -19,4 +19,4 @@ COPY --from=builder /github.com/links-japan/kakaku/kakaku_cmd /bin/kakaku_cmd
 COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
 
 ENTRYPOINT ["/bin/kakaku_cmd"]
-EXPOSE 50051
+EXPOSE 8080
