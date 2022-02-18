@@ -1,19 +1,13 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
-	"github.com/drone/signal"
 	"github.com/fox-one/mixin-sdk-go"
-	"github.com/go-chi/chi"
 	"github.com/links-japan/kakaku/internal/client"
 	"github.com/links-japan/kakaku/internal/config"
-	"github.com/links-japan/kakaku/internal/handler"
 	"github.com/links-japan/kakaku/internal/kakaku"
 	"github.com/links-japan/kakaku/internal/store"
 	"github.com/shopspring/decimal"
@@ -37,50 +31,7 @@ func main() {
 	store.Conn().AutoMigrate(&store.Asset{})
 
 	go startWorker()
-	go startServer()
-
 	select {}
-}
-
-func startServer() {
-	ctx := context.Background()
-	mux := chi.NewMux()
-	// rpc & api v1 & ws
-	{
-		svr := handler.New()
-
-		// api v1
-		restHandler := svr.HandleRest()
-		mux.Mount("/api", restHandler)
-	}
-
-	// launch server
-	addr := fmt.Sprintf(":%d", 8080)
-
-	svr := &http.Server{
-		Addr:    addr,
-		Handler: mux,
-	}
-
-	done := make(chan struct{}, 1)
-	ctx = signal.WithContextFunc(ctx, func() {
-		logrus.Debug("shutdown server...")
-
-		// create context with timeout
-		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
-		defer cancel()
-
-		if err := svr.Shutdown(ctx); err != nil {
-			logrus.WithError(err).Error("graceful shutdown server failed")
-		}
-
-		close(done)
-	})
-
-	logrus.Infoln("serve at", addr)
-	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
-		logrus.WithError(err).Fatal("server aborted")
-	}
 }
 
 func startWorker() {
