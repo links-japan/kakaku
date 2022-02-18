@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/drone/signal v1.0.0
 	github.com/fox-one/mixin-sdk-go v1.4.6
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c

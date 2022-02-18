@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/links-japan/kakaku/internal/config"
 	"github.com/links-japan/kakaku/internal/handler"
+	"github.com/links-japan/kakaku/internal/handler/hc"
 	"github.com/links-japan/kakaku/internal/store"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,10 @@ func main() {
 func startServer() {
 	ctx := context.Background()
 	mux := chi.NewMux()
+	// hc
+	{
+		mux.Mount("/", hc.HandleHc())
+	}
 	// rpc & api v1 & ws
 	{
 		svr := handler.New()
