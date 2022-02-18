@@ -18,5 +18,3 @@ FROM alpine:3.12.0 as runner
 
 COPY --from=builder /github.com/links-japan/kakaku/worker_cmd /bin/worker_cmd
 COPY --from=builder /github.com/links-japan/kakaku/server_cmd /bin/server_cmd
-
-EXPOSE 8080
