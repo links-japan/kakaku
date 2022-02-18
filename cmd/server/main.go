@@ -32,7 +32,8 @@ func main() {
 		log.Fatal(err)
 	}
 	store.Conn().AutoMigrate(&store.Asset{})
-	startServer()
+	go startServer()
+	select {}
 }
 
 func startServer() {
