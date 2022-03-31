@@ -15,7 +15,6 @@ import (
 	"github.com/links-japan/kakaku/internal/store"
 	"github.com/links-japan/log"
 	"github.com/shopspring/decimal"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -26,9 +25,6 @@ var (
 func main() {
 	initConfig()
 	log.Init()
-	if cfg.Debug {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
 
 	if err := store.Connect(cfg.DB.Dsn); err != nil {
 		log.Fatal(err)
@@ -64,22 +60,22 @@ func startServer() {
 
 	done := make(chan struct{}, 1)
 	ctx = signal.WithContextFunc(ctx, func() {
-		logrus.Debug("shutdown server...")
+		log.Debug("shutdown server...")
 
 		// create context with timeout
 		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
 		if err := svr.Shutdown(ctx); err != nil {
-			logrus.WithError(err).Error("graceful shutdown server failed")
+			log.WithError(err).Error("graceful shutdown server failed")
 		}
 
 		close(done)
 	})
 
-	logrus.Infoln("serve at", addr)
+	log.Infoln("serve at", addr)
 	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
-		logrus.WithError(err).Fatal("server aborted")
+		log.WithError(err).Fatal("server aborted")
 	}
 }
 
@@ -90,16 +86,16 @@ func initConfig() {
 	viper.AddConfigPath(os.Getenv("KAKAKU_CONFIG_PATH"))
 
 	if err := viper.ReadInConfig(); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	if err := viper.Unmarshal(&cfg); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	delta, err := decimal.NewFromString(cfg.Oracle.PriceDeltaStr)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	cfg.Oracle.PriceDelta = delta
 }

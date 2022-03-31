@@ -11,7 +11,6 @@ require (
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shopspring/decimal v1.2.0
-	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.0
 	github.com/twitchtv/twirp v7.1.0+incompatible
 	google.golang.org/grpc v1.42.0
