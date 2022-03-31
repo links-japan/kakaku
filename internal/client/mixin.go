@@ -2,9 +2,10 @@ package client
 
 import (
 	"context"
+	"strings"
+
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/shopspring/decimal"
-	"strings"
 )
 
 var Symbol2AssetID = map[string]string{
