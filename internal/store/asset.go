@@ -1,9 +1,10 @@
 package store
 
 import (
+	"time"
+
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
-	"time"
 )
 
 const (
@@ -12,15 +13,15 @@ const (
 )
 
 type Asset struct {
-	ID        int64
-	Base      string          `sql:"size:32"`
-	Quote     string          `sql:"size:32"`
-	Source    string          `sql:"size:32"`
-	Price     decimal.Decimal `gorm:"not null;" sql:"type:decimal(8,0);"`
-	Term      int64
-	Type      string `sql:"size:32"`
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	ID        int64           `json:"id"`
+	Base      string          `json:"base"; sql:"size:32"`
+	Quote     string          `json:"quote"; sql:"size:32"`
+	Source    string          `json:"source"; sql:"size:32"`
+	Price     decimal.Decimal `json:"price"; gorm:"not null;" sql:"type:decimal(8,0);"`
+	Term      int64           `json:"term"`
+	Type      string          `json:"type"; sql:"size:32"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	CreatedAt time.Time       `json:"created_at"`
 }
 
 type AssetStore struct {
