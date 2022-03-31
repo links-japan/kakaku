@@ -33,9 +33,6 @@ func (o *Oracle) Price(ctx context.Context, base string, quote string) (decimal.
 	mu := sync.Mutex{}
 	source := ""
 
-	ctx, cancel := context.WithTimeout(ctx, o.cfg.RequestTimeout)
-	defer cancel()
-
 	for _, cli := range o.clients {
 		go func(cli client.Client) {
 			price, err := cli.Price(ctx, base, quote)
