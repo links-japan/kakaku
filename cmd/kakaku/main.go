@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/links-japan/kakaku/internal/config"
 	"github.com/links-japan/kakaku/internal/kakaku"
 	"github.com/links-japan/kakaku/internal/store"
+	"github.com/links-japan/log"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -21,6 +21,7 @@ var (
 
 func main() {
 	initConfig()
+	log.Init()
 	if cfg.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
